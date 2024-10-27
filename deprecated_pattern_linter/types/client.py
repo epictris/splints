@@ -2,7 +2,8 @@ from enum import StrEnum
 from typing import Any, Literal
 from pydantic import BaseModel, RootModel
 
-DocumentUri = str
+from deprecated_pattern_linter.types.base import DocumentUri, Range, Request, TextDocumentIdentifier, TextDocumentItem, VersionedTextDocumentIdentifier
+
 
 class BaseRequest(BaseModel):
     id: int | str
@@ -79,14 +80,6 @@ class InitializedNotification(BaseModel):
     method: Literal["initialized"]
     params: InitializedParams
 
-class TextDocumentItem(BaseModel):
-    uri: DocumentUri
-    languageId: str
-    version: int
-    text: str
-
-class TextDocumentIdentifier(BaseModel):
-    uri: DocumentUri
 
 class DidOpenTextDocumentParams(BaseModel):
     textDocument: TextDocumentItem
@@ -95,16 +88,6 @@ class DidOpenTextDocumentNotification(BaseModel):
     method: Literal["textDocument/didOpen"]
     params: DidOpenTextDocumentParams
 
-class VersionedTextDocumentIdentifier(TextDocumentIdentifier):
-    version: int
-
-class Position(BaseModel):
-    line: int
-    character: int
-
-class Range(BaseModel):
-    start: Position
-    end: Position
 
 class TextDocumentContentChangeEvent(BaseModel):
     range: Range | None = None
@@ -124,7 +107,7 @@ class DocumentDiagnosticParams(BaseModel):
     identifier: str | None = None
     previousResultId: str | None = None
 
-class DocumentDiagnosticRequest(BaseModel):
+class DocumentDiagnosticRequest(Request):
     method: Literal["textDocument/diagnostic"]
     params: DocumentDiagnosticParams
 
