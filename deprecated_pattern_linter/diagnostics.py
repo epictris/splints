@@ -8,14 +8,14 @@ DEPRECATED_PATTERNS = [
 ]
 
 
-def generate_diagnostics(text: str) -> list[Diagnostic]:
+def generate_diagnostics(text: str) -> set[Diagnostic]:
     lines = text.splitlines()
-    diagnostics: list[Diagnostic] = []
+    diagnostics: set[Diagnostic] = set()
     for lineno, line in enumerate(lines):
         for pattern in DEPRECATED_PATTERNS:
             matches = re.finditer(pattern, line)
             for match in matches:
-                diagnostics.append(
+                diagnostics.add(
                     Diagnostic(
                         range=Range(
                             start=Position(line=lineno, character=match.start()),
