@@ -4,7 +4,9 @@ import sys
 from typing import Any
 from pydantic import BaseModel
 
-from deprecated_pattern_linter.client_types import (
+from deprecated_pattern_linter.diagnostics import generate_diagnostics
+from deprecated_pattern_linter.types.base import Message
+from deprecated_pattern_linter.types.client import (
     DidChangeTextDocumentNotification,
     DidOpenTextDocumentNotification,
     DocumentDiagnosticRequest,
@@ -17,11 +19,16 @@ from deprecated_pattern_linter.client_types import (
     TextDocumentContentChangeEvent,
     TextDocumentItem,
 )
-from deprecated_pattern_linter.server_types import (
+from deprecated_pattern_linter.types.server import (
+    Diagnostic,
     DiagnosticOptions,
+    DocumentDiagnosticResponse,
     InitializeResponse,
     InitializeResult,
-    ResponseMessage,
+    PublishDiagnosticsNotification,
+    PublishDiagnosticsParams,
+    RelatedFullDocumentDiagnosticReport,
+    RelatedUnchangedDocumentDiagnosticReport,
     ServerCapabilities,
     ServerInfo,
     ShutdownResponse,
@@ -108,7 +115,7 @@ def run():
         raise e
 
 
-def rpc_write(message: ResponseMessage) -> None:
+def rpc_write(message: Message) -> None:
     content = message.model_dump_json(indent=4)
     headers = f"Content-Length: {len(content)}\r\n"
     sys.stdout.write(headers + "\r\n" + content)
@@ -120,16 +127,28 @@ def apply_change(text: str, change: TextDocumentContentChangeEvent) -> str:
         return change.text
     lines = text.splitlines()
 
-    chars_preceding_change = lines[change.range.start.line][:change.range.start.character] if len(lines) > change.range.start.line else ""
-    chars_following_change = lines[change.range.end.line][change.range.end.character:] if len(lines) > change.range.end.line else ""
+    chars_preceding_change = (
+        lines[change.range.start.line][: change.range.start.character]
+        if len(lines) > change.range.start.line
+        else ""
+    )
+    chars_following_change = (
+        lines[change.range.end.line][change.range.end.character :]
+        if len(lines) > change.range.end.line
+        else ""
+    )
 
     update = chars_preceding_change + change.text + chars_following_change
-    lines = lines[:change.range.start.line] + [update] + lines[change.range.end.line + 1:]
+    lines = (
+        lines[: change.range.start.line] + [update] + lines[change.range.end.line + 1 :]
+    )
 
     return "\n".join(lines) + "\n"
 
+
 def start(logger: Logger):
     open_documents: dict[DocumentUri, TextDocumentItem] = {}
+    diagnostics_by_uri: dict[DocumentUri, set[Diagnostic]] = {}
     while True:
         message = read_message()
         if isinstance(message, InitializeRequest):
@@ -156,12 +175,54 @@ def start(logger: Logger):
             logger.info("Shutting down")
             return
         if isinstance(message, DidOpenTextDocumentNotification):
-            open_documents[message.params.textDocument.uri] = message.params.textDocument
+            open_documents[message.params.textDocument.uri] = (
+                message.params.textDocument
+            )
         if isinstance(message, DidChangeTextDocumentNotification):
             text_document = open_documents[message.params.textDocument.uri]
             for change in message.params.contentChanges:
                 text_document.text = apply_change(text_document.text, change)
             text_document.version = message.params.textDocument.version
+            diagnostics = generate_diagnostics(text=text_document.text)
+            diagnostics_by_uri[text_document.uri] = diagnostics
+            rpc_write(
+                PublishDiagnosticsNotification(
+                    method="textDocument/publishDiagnostics",
+                    params=PublishDiagnosticsParams(
+                        uri=text_document.uri,
+                        version=text_document.version,
+                        diagnostics=list(diagnostics),
+                    ),
+                )
+            )
 
         if isinstance(message, DocumentDiagnosticRequest):
-            pass
+            text_document = open_documents[message.params.textDocument.uri]
+            diagnostics = generate_diagnostics(text=text_document.text)
+            existing_diagnostics = diagnostics_by_uri.get(text_document.uri, set())
+            if (
+                existing_diagnostics == diagnostics
+                and message.params.previousResultId is not None
+            ):
+                logger.info("No changes")
+                rpc_write(
+                    DocumentDiagnosticResponse(
+                        id=message.id,
+                        result=RelatedUnchangedDocumentDiagnosticReport(
+                            relatedDocuments=[],
+                            resultId=message.params.previousResultId,
+                        ),
+                    )
+                )
+            else:
+                diagnostics_by_uri[text_document.uri] = diagnostics
+                rpc_write(
+                    DocumentDiagnosticResponse(
+                        id=message.id,
+                        result=RelatedFullDocumentDiagnosticReport(
+                            relatedDocuments=[],
+                            items=list(diagnostics),
+                            resultId=str(message.id),
+                        ),
+                    )
+                )
