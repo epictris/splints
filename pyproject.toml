@@ -1,0 +1,7 @@
+[project]
+name = "python-lsp"
+version = "0.0.0"
+dependencies = ["pydantic"]
+
+[build-system]
+requires = ["setuptools"]
