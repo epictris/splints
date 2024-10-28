@@ -1,8 +1,8 @@
 from typing import Literal
 from pydantic import BaseModel
 
-from splinter.types.base import NotificationBase
-from splinter.types.shared import Diagnostic, DocumentUri
+from splints.types.base import NotificationBase
+from splints.types.shared import Diagnostic, DocumentUri
 
 
 class PublishDiagnosticsParams(BaseModel):

@@ -1,10 +1,10 @@
-from splinter.methods.diagnostic import diagnostic
-from splinter.methods.document_changed import document_changed
-from splinter.methods.document_opened import document_opened
-from splinter.methods.initialize import initialize
-from splinter.methods.initialized import initialized
-from splinter.methods.shutdown import shutdown
-from splinter.server import Server
+from splints.methods.diagnostic import diagnostic
+from splints.methods.document_changed import document_changed
+from splints.methods.document_opened import document_opened
+from splints.methods.initialize import initialize
+from splints.methods.initialized import initialized
+from splints.methods.shutdown import shutdown
+from splints.server import Server
 
 
 def register_methods(server: Server):

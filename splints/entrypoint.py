@@ -1,7 +1,7 @@
-from splinter.rules import parse
-from splinter.register_methods import register_methods
-from splinter.server import Server
-from splinter.logger import logger
+from splints.rules import parse
+from splints.register_methods import register_methods
+from splints.server import Server
+from splints.logger import logger
 
 
 def run():

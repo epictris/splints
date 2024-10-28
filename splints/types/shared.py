@@ -3,7 +3,7 @@ from enum import IntEnum
 from typing import Any
 from pydantic import BaseModel
 
-from splinter.types.linting import LintRule
+from splints.types.linting import LintRule
 
 
 

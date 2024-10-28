@@ -2,8 +2,8 @@ import os
 import fnmatch
 import re
 
-from splinter.types.linting import LintRule, Severity, TextFormat
-from splinter.types.shared import (
+from splints.types.linting import LintRule, Severity, TextFormat
+from splints.types.shared import (
     Diagnostic,
     DiagnosticSeverity,
     DiagnosticTag,
@@ -43,7 +43,7 @@ def generate_diagnostics(
             for match in matches:
                 diagnostics.add(
                     Diagnostic(
-                        source="splinter",
+                        source="splints",
                         severity=CONVERT_SEVERITY[rule.severity],
                         tags=frozenset(
                             CONVERT_FORMAT[rule.format] if rule.format else set()

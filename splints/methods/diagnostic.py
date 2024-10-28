@@ -1,12 +1,12 @@
-from splinter.decorators import method
-from splinter.diagnostics import generate_diagnostics
-from splinter.types.methods.diagnostic import (
+from splints.decorators import method
+from splints.diagnostics import generate_diagnostics
+from splints.types.methods.diagnostic import (
     DocumentDiagnosticRequest,
     DocumentDiagnosticResponse,
     RelatedFullDocumentDiagnosticReport,
     RelatedUnchangedDocumentDiagnosticReport,
 )
-from splinter.types.shared import State
+from splints.types.shared import State
 
 
 @method(DocumentDiagnosticRequest, DocumentDiagnosticResponse)

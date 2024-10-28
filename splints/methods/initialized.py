@@ -1,9 +1,9 @@
 from typing import Literal
 
 from pydantic import BaseModel
-from splinter.decorators import method
-from splinter.types.base import NotificationBase
-from splinter.types.shared import State
+from splints.decorators import method
+from splints.types.base import NotificationBase
+from splints.types.shared import State
 
 
 class InitializedParams(BaseModel):

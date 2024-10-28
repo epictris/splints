@@ -1,19 +1,19 @@
 from typing import Callable
-from splinter.logger import logger
+from splints.logger import logger
 from typing import TypeVar
 
-from splinter.rpc import await_message, rpc_write
-from splinter.types.base import (
+from splints.rpc import await_message, rpc_write
+from splints.types.base import (
     NotificationBase,
     RequestBase,
     ResponseBase,
 )
 
 
-from splinter.types.linting import LintRule
-from splinter.types.methods.exit import ExitNotification
-from splinter.types.shared import State
-from splinter.types.unions import Notification, Request, Response
+from splints.types.linting import LintRule
+from splints.types.methods.exit import ExitNotification
+from splints.types.shared import State
+from splints.types.unions import Notification, Request, Response
 
 
 NotificationDataT = TypeVar("NotificationDataT", bound=NotificationBase)

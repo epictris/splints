@@ -1,9 +1,9 @@
 import sys
 from dataclasses import dataclass
-from splinter.logger import logger
+from splints.logger import logger
 
-from splinter.types.base import Message
-from splinter.types.unions import Notification, Request, RootInput
+from splints.types.base import Message
+from splints.types.unions import Notification, Request, RootInput
 
 
 def read_field() -> bytes:

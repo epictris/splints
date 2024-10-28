@@ -1,6 +1,6 @@
-from splinter.decorators import method
+from splints.decorators import method
 
-from splinter.types.methods.initialize import (
+from splints.types.methods.initialize import (
     DiagnosticOptions,
     InitializeRequest,
     InitializeResponse,
@@ -10,7 +10,7 @@ from splinter.types.methods.initialize import (
     TextDocumentSyncKind,
     TextDocumentSyncOptions,
 )
-from splinter.types.shared import State
+from splints.types.shared import State
 
 
 @method(InitializeRequest, InitializeResponse)

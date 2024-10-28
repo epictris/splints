@@ -2,8 +2,8 @@
 from typing import Literal
 from pydantic import BaseModel
 
-from splinter.types.base import NotificationBase
-from splinter.types.shared import Range, VersionedTextDocumentIdentifier
+from splints.types.base import NotificationBase
+from splints.types.shared import Range, VersionedTextDocumentIdentifier
 
 
 class TextDocumentContentChangeEvent(BaseModel):

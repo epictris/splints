@@ -1,14 +1,14 @@
-from splinter.decorators import method
-from splinter.diagnostics import generate_diagnostics
-from splinter.types.methods.document_changed import (
+from splints.decorators import method
+from splints.diagnostics import generate_diagnostics
+from splints.types.methods.document_changed import (
     DidChangeTextDocumentNotification,
     TextDocumentContentChangeEvent,
 )
-from splinter.types.methods.publish_diagnostics import (
+from splints.types.methods.publish_diagnostics import (
     PublishDiagnosticsNotification,
     PublishDiagnosticsParams,
 )
-from splinter.types.shared import State
+from splints.types.shared import State
 
 
 def apply_change(text: str, change: TextDocumentContentChangeEvent) -> str:

@@ -2,17 +2,17 @@
 requires = ["setuptools"]
 
 [project]
-name = "splinter"
+name = "splints"
 version = "0.0.0"
 dependencies = ["pydantic == 2.9.2", "pyyaml"]
 
 [project.scripts]
-splinter = "splinter.entrypoint:run"
+splints = "splints.entrypoint:run"
 
 [tool.setuptools.package-dir]
-splinter = "splinter"
-splinter_parser = "splinter_parser"
+splints = "splints"
+splints_plugin = "splints_plugin"
 
 
 [tool.setuptools]
-packages = ["splinter", "splinter_parser"]
+packages = ["splints", "splints_plugin"]

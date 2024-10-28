@@ -1,7 +1,7 @@
-from splinter.decorators import method
+from splints.decorators import method
 
-from splinter.types.methods.document_closed import DidCloseTextDocumentNotification
-from splinter.types.shared import State
+from splints.types.methods.document_closed import DidCloseTextDocumentNotification
+from splints.types.shared import State
 
 
 @method(DidCloseTextDocumentNotification)
