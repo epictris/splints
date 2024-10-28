@@ -105,14 +105,6 @@ def read_message() -> InputMessage:
     return message
 
 
-def run():
-    try:
-        start()
-    except Exception as e:
-        logger.error(e)
-        raise e
-
-
 def rpc_write(message: Message) -> None:
     content = message.model_dump_json(indent=4)
     headers = f"Content-Length: {len(content)}\r\n"
@@ -226,4 +218,9 @@ def start():
                 )
 
 
-run()
+def run():
+    try:
+        start()
+    except Exception as e:
+        logger.error(e)
+        raise e

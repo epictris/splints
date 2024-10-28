@@ -1,4 +1,10 @@
+[build-system]
+requires = ["setuptools"]
+
 [project]
 name = "pattern-linter-lsp"
 version = "0.0.0"
 dependencies = ["pydantic"]
+
+[project.scripts]
+pattern-linter-lsp = "pattern_linter.entrypoint:run"

@@ -2,7 +2,7 @@ from enum import IntEnum, StrEnum
 from typing import Any, Literal
 from pydantic import BaseModel
 
-from deprecated_pattern_linter.types.base import (
+from pattern_linter.types.base import (
     DocumentUri,
     Notification,
     Range,

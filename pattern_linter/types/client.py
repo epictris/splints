@@ -2,7 +2,7 @@ from enum import StrEnum
 from typing import Any, Literal
 from pydantic import BaseModel, RootModel
 
-from deprecated_pattern_linter.types.base import DocumentUri, Range, Request, TextDocumentIdentifier, TextDocumentItem, VersionedTextDocumentIdentifier
+from pattern_linter.types.base import DocumentUri, Range, Request, TextDocumentIdentifier, TextDocumentItem, VersionedTextDocumentIdentifier
 
 
 class BaseRequest(BaseModel):

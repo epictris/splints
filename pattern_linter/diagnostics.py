@@ -1,5 +1,5 @@
-from deprecated_pattern_linter.types.base import Position, Range
-from deprecated_pattern_linter.types.server import Diagnostic
+from pattern_linter.types.base import Position, Range
+from pattern_linter.types.server import Diagnostic
 import re
 
 DEPRECATED_PATTERNS = [
