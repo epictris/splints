@@ -1,25 +1,23 @@
 from dataclasses import dataclass
-from logging import FileHandler, Logger, getLogger, DEBUG
+from logging import FileHandler, getLogger, DEBUG
 import sys
 from typing import Any
 from pydantic import BaseModel
 
-from deprecated_pattern_linter.diagnostics import generate_diagnostics
-from deprecated_pattern_linter.types.base import Message
-from deprecated_pattern_linter.types.client import (
+from pattern_linter.diagnostics import generate_diagnostics
+from pattern_linter.types.base import Message, DocumentUri, TextDocumentItem
+from pattern_linter.types.client import (
     DidChangeTextDocumentNotification,
     DidOpenTextDocumentNotification,
     DocumentDiagnosticRequest,
-    DocumentUri,
     InitializeRequest,
     InitializedNotification,
     InputMessage,
     RootMessage,
     ShutdownRequest,
     TextDocumentContentChangeEvent,
-    TextDocumentItem,
 )
-from deprecated_pattern_linter.types.server import (
+from pattern_linter.types.server import (
     Diagnostic,
     DiagnosticOptions,
     DocumentDiagnosticResponse,
@@ -109,7 +107,7 @@ def read_message() -> InputMessage:
 
 def run():
     try:
-        start(logger)
+        start()
     except Exception as e:
         logger.error(e)
         raise e
@@ -146,7 +144,7 @@ def apply_change(text: str, change: TextDocumentContentChangeEvent) -> str:
     return "\n".join(lines) + "\n"
 
 
-def start(logger: Logger):
+def start():
     open_documents: dict[DocumentUri, TextDocumentItem] = {}
     diagnostics_by_uri: dict[DocumentUri, set[Diagnostic]] = {}
     while True:
@@ -226,3 +224,6 @@ def start(logger: Logger):
                         ),
                     )
                 )
+
+
+run()

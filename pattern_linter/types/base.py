@@ -38,7 +38,7 @@ class TextDocumentIdentifier(BaseModel):
 class VersionedTextDocumentIdentifier(TextDocumentIdentifier):
     version: int
 
-class Position(BaseModel):
+class Position(BaseModel, frozen=True):
     line: int
     character: int
 
