@@ -2,9 +2,9 @@
 requires = ["setuptools"]
 
 [project]
-name = "pattern-linter-lsp"
+name = "splinter"
 version = "0.0.0"
-dependencies = ["pydantic"]
+dependencies = ["pydantic == 2.9.2"]
 
 [project.scripts]
-pattern-linter-lsp = "pattern_linter.entrypoint:run"
+splinter = "splinter.entrypoint:run"

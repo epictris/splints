@@ -1,6 +1,6 @@
-from pattern_linter.types.base import Position, Range
-from pattern_linter.types.server import Diagnostic
 import re
+
+from splinter.types.shared import Diagnostic, DiagnosticSeverity, DiagnosticTag, Position, Range
 
 DEPRECATED_PATTERNS = [
     "deprecated",
@@ -17,6 +17,10 @@ def generate_diagnostics(text: str) -> set[Diagnostic]:
             for match in matches:
                 diagnostics.add(
                     Diagnostic(
+                        source="splinter",
+                        severity=DiagnosticSeverity.INFO,
+                        tags=frozenset({DiagnosticTag.UNNECESSARY, DiagnosticTag.DEPRECATED}),
+                        code=f"test-deprecated-pattern-code",
                         range=Range(
                             start=Position(line=lineno, character=match.start()),
                             end=Position(line=lineno, character=match.end()),
