@@ -4,7 +4,15 @@ requires = ["setuptools"]
 [project]
 name = "splinter"
 version = "0.0.0"
-dependencies = ["pydantic == 2.9.2"]
+dependencies = ["pydantic == 2.9.2", "pyyaml"]
 
 [project.scripts]
 splinter = "splinter.entrypoint:run"
+
+[tool.setuptools.package-dir]
+splinter = "splinter"
+splinter_parser = "splinter_parser"
+
+
+[tool.setuptools]
+packages = ["splinter", "splinter_parser"]
