@@ -5,6 +5,6 @@ from splints.types.shared import State
 
 
 @method(DidCloseTextDocumentNotification)
-def document_opened(args: DidCloseTextDocumentNotification, state: State):
+def document_closed(args: DidCloseTextDocumentNotification, state: State):
     state.text_documents.pop(args.params.textDocument.uri)
     return None

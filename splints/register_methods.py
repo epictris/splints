@@ -20,7 +20,7 @@ def register_methods(server: Server):
         name=document_opened.arg_type.__name__, func=document_opened.func
     )
     server.register_method(
-        name=document_opened.arg_type.__name__, func=document_closed.func
+        name=document_closed.arg_type.__name__, func=document_closed.func
     )
     server.register_method(name=shutdown.arg_type.__name__, func=shutdown.func)
     server.register_method(name=exit.arg_type.__name__, func=exit.func)
