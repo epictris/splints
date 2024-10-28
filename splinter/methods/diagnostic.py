@@ -12,7 +12,7 @@ from splinter.types.shared import State
 @method(DocumentDiagnosticRequest, DocumentDiagnosticResponse)
 def diagnostic(message: DocumentDiagnosticRequest, state: State):
     text_document = state.text_documents[message.params.textDocument.uri]
-    diagnostics = generate_diagnostics(text=text_document.text)
+    diagnostics = generate_diagnostics(text_document=text_document, rules=state.rules)
     existing_diagnostics = state.diagnostics_by_uri.get(text_document.uri, set())
     if (
         existing_diagnostics == diagnostics

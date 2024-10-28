@@ -1,7 +1,13 @@
 from splinter.decorators import method
 from splinter.diagnostics import generate_diagnostics
-from splinter.types.methods.document_changed import DidChangeTextDocumentNotification, TextDocumentContentChangeEvent
-from splinter.types.methods.publish_diagnostics import PublishDiagnosticsNotification, PublishDiagnosticsParams
+from splinter.types.methods.document_changed import (
+    DidChangeTextDocumentNotification,
+    TextDocumentContentChangeEvent,
+)
+from splinter.types.methods.publish_diagnostics import (
+    PublishDiagnosticsNotification,
+    PublishDiagnosticsParams,
+)
 from splinter.types.shared import State
 
 
@@ -35,7 +41,7 @@ def document_changed(message: DidChangeTextDocumentNotification, state: State):
     for change in message.params.contentChanges:
         text_document.text = apply_change(text_document.text, change)
     text_document.version = message.params.textDocument.version
-    diagnostics = generate_diagnostics(text=text_document.text)
+    diagnostics = generate_diagnostics(text_document=text_document, rules=state.rules)
     state.diagnostics_by_uri[text_document.uri] = diagnostics
     return PublishDiagnosticsNotification(
         method="textDocument/publishDiagnostics",
