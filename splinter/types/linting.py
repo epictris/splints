@@ -1,5 +1,7 @@
-from dataclasses import dataclass
 from enum import StrEnum
+
+from pydantic import BaseModel
+from pydantic.root_model import RootModel
 
 
 class Severity(StrEnum):
@@ -25,24 +27,16 @@ class TextFormat(StrEnum):
     FADE = "fade"
 
 
-@dataclass(kw_only=True)
-class LintRule:
+class LintRule(BaseModel):
     pattern: str
     message: str
     code: str | None = None
     format: TextFormat | None = None
     severity: Severity = Severity.WARNING
     multiline: bool = False
+    file_globs: list[str]
     engine: RegexEngine = RegexEngine.PYTHON
 
 
-@dataclass(kw_only=True)
-class Scope:
-    file_types: list[str]
-    file_paths: list[str]
-    rules: list[LintRule]
-
-
-@dataclass(kw_only=True)
-class Config:
-    scopes: list[Scope]
+class Rules(RootModel):
+    root: list[LintRule]

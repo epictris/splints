@@ -3,6 +3,9 @@ from enum import IntEnum
 from typing import Any
 from pydantic import BaseModel
 
+from splinter.types.linting import LintRule
+
+
 
 DocumentUri = str
 
@@ -74,3 +77,4 @@ class Diagnostic(BaseModel, frozen=True):
 class State:
     text_documents: dict[DocumentUri, TextDocumentItem]
     diagnostics_by_uri: dict[DocumentUri, set[Diagnostic]]
+    rules: list[LintRule]

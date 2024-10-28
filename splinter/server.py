@@ -10,6 +10,7 @@ from splinter.types.base import (
 )
 
 
+from splinter.types.linting import LintRule
 from splinter.types.methods.exit import ExitNotification
 from splinter.types.shared import State
 from splinter.types.unions import Notification, Request, Response
@@ -21,9 +22,9 @@ ResponseDataT = TypeVar("ResponseDataT", bound=ResponseBase)
 
 
 class Server:
-    def __init__(self):
+    def __init__(self, rules: list[LintRule]):
         self.method_handlers: dict[str, Callable] = {}
-        self._state = State(text_documents={}, diagnostics_by_uri={})
+        self._state = State(text_documents={}, diagnostics_by_uri={}, rules=rules)
 
     def register_method(
         self,
