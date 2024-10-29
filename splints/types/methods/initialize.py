@@ -42,6 +42,7 @@ class TextDocumentSyncOptions(BaseModel):
 class ServerCapabilities(BaseModel):
     diagnosticProvider: DiagnosticOptions | DiagnosticRegistrationOptions | None = None
     textDocumentSync: TextDocumentSyncOptions
+    codeActionProvider: bool = True
 
 
 class ClientInfo(BaseModel):
