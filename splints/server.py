@@ -22,7 +22,7 @@ ResponseDataT = TypeVar("ResponseDataT", bound=ResponseBase)
 
 
 class Server:
-    def __init__(self, rules: frozenset[LintRule]):
+    def __init__(self, rules: list[LintRule]):
         self.method_handlers: dict[str, Callable] = {}
         self._state = State(text_documents={}, lint_rules=rules)
 

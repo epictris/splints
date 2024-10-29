@@ -14,22 +14,19 @@ def document_opened(args: DidOpenTextDocumentNotification, state: State):
     file_path = os.path.relpath(
         urllib.parse.urlparse(args.params.textDocument.uri).path
     )
-    applicable_rules = frozenset(
-        {
-            ActiveLintRule(
-                pattern=rule.pattern,
-                message=rule.message,
-                code=rule.code,
-                format=rule.format,
-                severity=rule.severity,
-                multiline=rule.multiline,
-                engine=rule.engine,
-            )
-            for rule in state.lint_rules
-            if any(fnmatch.fnmatch(file_path, path) for path in rule.include_globs)
-        }
-    )
-
+    applicable_rules = [
+        ActiveLintRule(
+            pattern=rule.pattern,
+            message=rule.message,
+            code=rule.code,
+            format=rule.format,
+            severity=rule.severity,
+            multiline=rule.multiline,
+            engine=rule.engine,
+        )
+        for rule in state.lint_rules
+        if any(fnmatch.fnmatch(file_path, path) for path in rule.include_globs)
+    ]
     state.text_documents[args.params.textDocument.uri] = TextDocumentData(
         document=args.params.textDocument,
         lint_rules=applicable_rules,

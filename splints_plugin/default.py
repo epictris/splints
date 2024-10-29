@@ -16,8 +16,8 @@ def _locate_rules_file() -> str | None:
     return None
 
 
-def parse() -> frozenset[LintRule]:
+def parse() -> list[LintRule]:
     rules_file = _locate_rules_file()
     if rules_file is None:
-        return frozenset()
+        return list()
     return Rules.model_validate(yaml.safe_load(open(rules_file))).root

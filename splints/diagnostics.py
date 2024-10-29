@@ -114,7 +114,7 @@ def _gen_singleline_diagnostics(
 
 
 def generate_diagnostics(
-    text_document: TextDocumentItem, rules: frozenset[ActiveLintRule]
+    text_document: TextDocumentItem, rules: list[ActiveLintRule]
 ) -> set[Diagnostic]:
     line_by_char_range_lookup = _construct_line_index_by_file_char_range_lookup(
         text_document.text

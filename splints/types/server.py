@@ -7,11 +7,11 @@ from splints.types.lsp.shared import Diagnostic, DocumentUri, TextDocumentItem
 @dataclass(kw_only=True)
 class TextDocumentData:
     document: TextDocumentItem
-    lint_rules: frozenset[ActiveLintRule]
+    lint_rules: list[ActiveLintRule]
     diagnostics: set[Diagnostic]
 
 
 @dataclass(kw_only=True)
 class State:
     text_documents: dict[DocumentUri, TextDocumentData]
-    lint_rules: frozenset[LintRule]
+    lint_rules: list[LintRule]
