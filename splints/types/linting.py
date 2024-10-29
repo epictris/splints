@@ -17,25 +17,44 @@ class RegexEngine(StrEnum):
     RE2 = "re2"
 
 
-class Tag(StrEnum):
-    UNNECESSARY = "unnecessary"
-    DEPRECATED = "deprecated"
-
-
 class TextFormat(StrEnum):
     STRIKETHROUGH = "strikethrough"
     FADE = "fade"
+
+
+class CodeActionType(StrEnum):
+    REPLACE = "replace"
+    IMPORT = "import"
+
+
+class PatternReplacement(BaseModel):
+    description: str
+    pattern: str
+    replacement: str
+    imports: list[str] = []
 
 
 class LintRule(BaseModel):
     pattern: str
     message: str
     code: str | None = None
-    format: TextFormat | None = None
+    include_globs: list[str] = ["*"]
+    exclude_globs: list[str] = []
     severity: Severity = Severity.WARNING
+    format: TextFormat | None = None
     multiline: bool = False
-    file_globs: list[str]
     engine: RegexEngine = RegexEngine.PYTHON
+    replacement_options: list[PatternReplacement] = []
+
+
+class ActiveLintRule(BaseModel):
+    pattern: str
+    message: str
+    code: str | None
+    format: TextFormat | None
+    severity: Severity
+    multiline: bool
+    engine: RegexEngine
 
 
 class Rules(RootModel):
