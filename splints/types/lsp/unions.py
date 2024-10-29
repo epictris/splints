@@ -1,6 +1,7 @@
 from pydantic import RootModel
 
 from splints.methods.initialized import InitializedNotification
+from splints.types.methods.code_action_request import CodeActionRequest, CodeActionResponse
 from splints.types.methods.configution_changed import (
     DidChangeConfigurationClientCapabilitiesNotification,
 )
@@ -24,10 +25,10 @@ Notification = (
     | ExitNotification
     | DidChangeConfigurationClientCapabilitiesNotification
 )
-Request = InitializeRequest | ShutdownRequest | DocumentDiagnosticRequest
+Request = InitializeRequest | ShutdownRequest | DocumentDiagnosticRequest | CodeActionRequest
 
 
-Response = InitializeResponse | DocumentDiagnosticResponse | ShutdownResponse
+Response = InitializeResponse | DocumentDiagnosticResponse | ShutdownResponse | CodeActionResponse
 
 
 class RootInput(RootModel):

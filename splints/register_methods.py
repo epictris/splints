@@ -1,3 +1,4 @@
+from splints.methods.code_action_request import code_action_request
 from splints.methods.diagnostic import diagnostic
 from splints.methods.document_changed import document_changed
 from splints.methods.document_opened import document_opened
@@ -24,3 +25,6 @@ def register_methods(server: Server):
     )
     server.register_method(name=shutdown.arg_type.__name__, func=shutdown.func)
     server.register_method(name=exit.arg_type.__name__, func=exit.func)
+    server.register_method(
+        name=code_action_request.arg_type.__name__, func=code_action_request.func
+    )
