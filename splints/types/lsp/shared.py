@@ -1,6 +1,7 @@
 from enum import IntEnum
-from typing import Any
 from pydantic import BaseModel
+
+from splints.types.linting import LintRuleId
 
 
 DocumentUri = str
@@ -57,6 +58,11 @@ class DiagnosticRelatedInformation(BaseModel, frozen=True):
     message: str
 
 
+class DiagnosticData(BaseModel, frozen=True):
+    rule_id: LintRuleId
+    text: str
+
+
 class Diagnostic(BaseModel, frozen=True):
     range: Range
     severity: DiagnosticSeverity | None = None
@@ -66,4 +72,4 @@ class Diagnostic(BaseModel, frozen=True):
     message: str
     tags: frozenset[DiagnosticTag] | None = None
     relatedInformation: tuple[DiagnosticRelatedInformation] | None = None
-    data: Any = None
+    data: DiagnosticData | None = None

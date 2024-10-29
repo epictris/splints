@@ -1,8 +1,9 @@
 import re
 
-from splints.types.linting import ActiveLintRule, Severity, TextFormat
+from splints.types.linting import ActiveLintRule, LintRuleId, Severity, TextFormat
 from splints.types.lsp.shared import (
     Diagnostic,
+    DiagnosticData,
     DiagnosticSeverity,
     DiagnosticTag,
     Position,
@@ -61,6 +62,7 @@ def get_line_and_char_index_by_file_char_index(
 
 def _gen_multiline_diagnostics(
     rule: ActiveLintRule,
+    id: LintRuleId,
     line_by_char_range_lookup: dict[tuple[LineStartIndex, LineEndIndex], LineIndex],
     text: str,
 ) -> set[Diagnostic]:
@@ -83,13 +85,14 @@ def _gen_multiline_diagnostics(
                     end=Position(line=end_line, character=end_char),
                 ),
                 message=rule.message,
+                data=DiagnosticData(rule_id=id, text=match.group(0)),
             )
         )
     return diagnostics
 
 
 def _gen_singleline_diagnostics(
-    rule: ActiveLintRule, lines: list[str]
+    rule: ActiveLintRule, id: LintRuleId, lines: list[str]
 ) -> set[Diagnostic]:
     diagnostics: set[Diagnostic] = set()
     for lineno, line in enumerate(lines):
@@ -108,13 +111,14 @@ def _gen_singleline_diagnostics(
                         end=Position(line=lineno, character=match.end()),
                     ),
                     message=rule.message,
+                    data=DiagnosticData(rule_id=id, text=match.group(0)),
                 )
             )
     return diagnostics
 
 
 def generate_diagnostics(
-    text_document: TextDocumentItem, rules: list[ActiveLintRule]
+    text_document: TextDocumentItem, rules: dict[LintRuleId, ActiveLintRule]
 ) -> set[Diagnostic]:
     line_by_char_range_lookup = _construct_line_index_by_file_char_range_lookup(
         text_document.text
@@ -122,14 +126,14 @@ def generate_diagnostics(
     lines = text_document.text.splitlines()
     diagnostics: set[Diagnostic] = set()
 
-    for rule in rules:
+    for id, rule in rules.items():
         if rule.multiline:
             diagnostics.update(
                 _gen_multiline_diagnostics(
-                    rule, line_by_char_range_lookup, text_document.text
+                    rule, id, line_by_char_range_lookup, text_document.text
                 )
             )
         else:
-            diagnostics.update(_gen_singleline_diagnostics(rule, lines))
+            diagnostics.update(_gen_singleline_diagnostics(rule, id, lines))
 
     return diagnostics
