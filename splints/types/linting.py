@@ -57,5 +57,8 @@ class ActiveLintRule(BaseModel):
     engine: RegexEngine
 
 
+LintRuleId = int
+
+
 class Rules(RootModel):
     root: list[LintRule]

@@ -14,8 +14,8 @@ def document_opened(args: DidOpenTextDocumentNotification, state: State):
     file_path = os.path.relpath(
         urllib.parse.urlparse(args.params.textDocument.uri).path
     )
-    applicable_rules = [
-        ActiveLintRule(
+    applicable_rules = {
+        rule_id: ActiveLintRule(
             pattern=rule.pattern,
             message=rule.message,
             code=rule.code,
@@ -24,9 +24,9 @@ def document_opened(args: DidOpenTextDocumentNotification, state: State):
             multiline=rule.multiline,
             engine=rule.engine,
         )
-        for rule in state.lint_rules
+        for rule_id, rule in state.lint_rules.items()
         if any(fnmatch.fnmatch(file_path, path) for path in rule.include_globs)
-    ]
+    }
     state.text_documents[args.params.textDocument.uri] = TextDocumentData(
         document=args.params.textDocument,
         lint_rules=applicable_rules,
