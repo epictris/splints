@@ -1,9 +1,7 @@
-import os
-import fnmatch
 import re
 
-from splints.types.linting import LintRule, Severity, TextFormat
-from splints.types.shared import (
+from splints.types.linting import ActiveLintRule, Severity, TextFormat
+from splints.types.lsp.shared import (
     Diagnostic,
     DiagnosticSeverity,
     DiagnosticTag,
@@ -11,7 +9,6 @@ from splints.types.shared import (
     Range,
     TextDocumentItem,
 )
-import urllib.parse
 
 CONVERT_SEVERITY = {
     Severity.ERROR: DiagnosticSeverity.ERROR,
@@ -25,35 +22,114 @@ CONVERT_FORMAT = {
     TextFormat.FADE: {DiagnosticTag.UNNECESSARY},
 }
 
+LineIndex = int
+LineCharIndex = int
 
-def generate_diagnostics(
-    text_document: TextDocumentItem, rules: list[LintRule]
+FileCharIndex = int
+
+LineStartIndex = int
+LineEndIndex = int
+
+
+def _construct_line_index_by_file_char_range_lookup(
+    text: str,
+) -> dict[tuple[LineStartIndex, LineEndIndex], LineIndex]:
+    line_by_char_index_range: dict[tuple[LineStartIndex, LineEndIndex], LineIndex] = {}
+    current_line = 0
+    current_range_start = 0
+    current_range_end = 0
+    for index, char in enumerate(text):
+        current_range_end = index
+        if char == "\n":
+            line_by_char_index_range[(current_range_start, current_range_end)] = (
+                current_line
+            )
+            current_line += 1
+            current_range_start = current_range_end + 1
+    return line_by_char_index_range
+
+
+def get_line_and_char_index_by_file_char_index(
+    index: FileCharIndex,
+    line_lookup: dict[tuple[LineStartIndex, LineEndIndex], LineIndex],
+) -> tuple[LineIndex, LineCharIndex]:
+    for [start, end], line in line_lookup.items():
+        if start <= index <= end:
+            return (line, index - start)
+    raise ValueError(f"No line found for index {index}")
+
+
+def _gen_multiline_diagnostics(
+    rule: ActiveLintRule,
+    line_by_char_range_lookup: dict[tuple[LineStartIndex, LineEndIndex], LineIndex],
+    text: str,
 ) -> set[Diagnostic]:
-    file_path = os.path.relpath(urllib.parse.urlparse(text_document.uri).path)
-    applicable_rules = [
-        rule
-        for rule in rules
-        if any(fnmatch.fnmatch(file_path, path) for path in rule.file_globs)
-    ]
-    lines = text_document.text.splitlines()
+    diagnostics: set[Diagnostic] = set()
+    for match in re.finditer(rule.pattern, text, re.MULTILINE):
+        start_line, start_char = get_line_and_char_index_by_file_char_index(
+            index=match.start(), line_lookup=line_by_char_range_lookup
+        )
+        end_line, end_char = get_line_and_char_index_by_file_char_index(
+            index=match.end(), line_lookup=line_by_char_range_lookup
+        )
+        diagnostics.add(
+            Diagnostic(
+                source="splints",
+                severity=CONVERT_SEVERITY[rule.severity],
+                tags=frozenset(CONVERT_FORMAT[rule.format] if rule.format else set()),
+                code=rule.code,
+                range=Range(
+                    start=Position(line=start_line, character=start_char),
+                    end=Position(line=end_line, character=end_char),
+                ),
+                message=rule.message,
+            )
+        )
+    return diagnostics
+
+
+def _gen_singleline_diagnostics(
+    rule: ActiveLintRule, lines: list[str]
+) -> set[Diagnostic]:
     diagnostics: set[Diagnostic] = set()
     for lineno, line in enumerate(lines):
-        for rule in applicable_rules:
-            matches = re.finditer(rule.pattern, line)
-            for match in matches:
-                diagnostics.add(
-                    Diagnostic(
-                        source="splints",
-                        severity=CONVERT_SEVERITY[rule.severity],
-                        tags=frozenset(
-                            CONVERT_FORMAT[rule.format] if rule.format else set()
-                        ),
-                        code=rule.code,
-                        range=Range(
-                            start=Position(line=lineno, character=match.start()),
-                            end=Position(line=lineno, character=match.end()),
-                        ),
-                        message=rule.message,
-                    )
+        matches = re.finditer(rule.pattern, line)
+        for match in matches:
+            diagnostics.add(
+                Diagnostic(
+                    source="splints",
+                    severity=CONVERT_SEVERITY[rule.severity],
+                    tags=frozenset(
+                        CONVERT_FORMAT[rule.format] if rule.format else set()
+                    ),
+                    code=rule.code,
+                    range=Range(
+                        start=Position(line=lineno, character=match.start()),
+                        end=Position(line=lineno, character=match.end()),
+                    ),
+                    message=rule.message,
                 )
+            )
+    return diagnostics
+
+
+def generate_diagnostics(
+    text_document: TextDocumentItem, rules: frozenset[ActiveLintRule]
+) -> set[Diagnostic]:
+    line_by_char_range_lookup = _construct_line_index_by_file_char_range_lookup(
+        text_document.text
+    )
+    lines = text_document.text.splitlines()
+    diagnostics: set[Diagnostic] = set()
+
+    for rule in rules:
+        if rule.multiline:
+            diagnostics.update(
+                _gen_multiline_diagnostics(
+                    rule, line_by_char_range_lookup, text_document.text
+                )
+            )
+        else:
+            diagnostics.update(_gen_singleline_diagnostics(rule, lines))
+
     return diagnostics
