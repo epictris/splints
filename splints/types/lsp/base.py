@@ -2,6 +2,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel
 
+
 class Message(BaseModel):
     jsonrpc: Literal["2.0"] = "2.0"
 

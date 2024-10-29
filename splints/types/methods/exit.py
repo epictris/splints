@@ -1,5 +1,5 @@
 from typing import Literal
-from splints.types.base import NotificationBase
+from splints.types.lsp.base import NotificationBase
 
 
 class ExitNotification(NotificationBase):

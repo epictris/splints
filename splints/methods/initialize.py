@@ -10,7 +10,7 @@ from splints.types.methods.initialize import (
     TextDocumentSyncKind,
     TextDocumentSyncOptions,
 )
-from splints.types.shared import State
+from splints.types.server import State
 
 
 @method(InitializeRequest, InitializeResponse)

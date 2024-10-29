@@ -3,7 +3,7 @@ from splints.logger import logger
 from typing import TypeVar
 
 from splints.rpc import await_message, rpc_write
-from splints.types.base import (
+from splints.types.lsp.base import (
     NotificationBase,
     RequestBase,
     ResponseBase,
@@ -12,8 +12,8 @@ from splints.types.base import (
 
 from splints.types.linting import LintRule
 from splints.types.methods.exit import ExitNotification
-from splints.types.shared import State
-from splints.types.unions import Notification, Request, Response
+from splints.types.server import State
+from splints.types.lsp.unions import Notification, Request, Response
 
 
 NotificationDataT = TypeVar("NotificationDataT", bound=NotificationBase)
@@ -22,9 +22,9 @@ ResponseDataT = TypeVar("ResponseDataT", bound=ResponseBase)
 
 
 class Server:
-    def __init__(self, rules: list[LintRule]):
+    def __init__(self, rules: frozenset[LintRule]):
         self.method_handlers: dict[str, Callable] = {}
-        self._state = State(text_documents={}, diagnostics_by_uri={}, rules=rules)
+        self._state = State(text_documents={}, lint_rules=rules)
 
     def register_method(
         self,

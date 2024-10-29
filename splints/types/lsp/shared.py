@@ -1,10 +1,6 @@
-from dataclasses import dataclass
 from enum import IntEnum
 from typing import Any
 from pydantic import BaseModel
-
-from splints.types.linting import LintRule
-
 
 
 DocumentUri = str
@@ -71,10 +67,3 @@ class Diagnostic(BaseModel, frozen=True):
     tags: frozenset[DiagnosticTag] | None = None
     relatedInformation: tuple[DiagnosticRelatedInformation] | None = None
     data: Any = None
-
-
-@dataclass(kw_only=True)
-class State:
-    text_documents: dict[DocumentUri, TextDocumentItem]
-    diagnostics_by_uri: dict[DocumentUri, set[Diagnostic]]
-    rules: list[LintRule]

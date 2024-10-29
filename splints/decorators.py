@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Callable, Type
 
-from splints.types.shared import State
+from splints.types.server import State
 
 
 @dataclass(kw_only=True)

@@ -1,8 +1,8 @@
 from typing import Literal
 from pydantic import BaseModel
 
-from splints.types.base import NotificationBase
-from splints.types.shared import TextDocumentItem
+from splints.types.lsp.base import NotificationBase
+from splints.types.lsp.shared import TextDocumentItem
 
 
 class DidOpenTextDocumentParams(BaseModel):

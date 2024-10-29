@@ -3,8 +3,8 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from splints.types.base import RequestBase, ResponseBase
-from splints.types.shared import Diagnostic, TextDocumentIdentifier
+from splints.types.lsp.base import RequestBase, ResponseBase
+from splints.types.lsp.shared import Diagnostic, TextDocumentIdentifier
 
 
 class DocumentDiagnosticReportKind(StrEnum):

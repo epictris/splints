@@ -1,5 +1,5 @@
 from typing import Literal
-from splints.types.base import RequestBase, ResponseBase
+from splints.types.lsp.base import RequestBase, ResponseBase
 
 
 class ShutdownResponse(ResponseBase):

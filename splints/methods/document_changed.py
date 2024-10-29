@@ -8,7 +8,7 @@ from splints.types.methods.publish_diagnostics import (
     PublishDiagnosticsNotification,
     PublishDiagnosticsParams,
 )
-from splints.types.shared import State
+from splints.types.server import State
 
 
 def apply_change(text: str, change: TextDocumentContentChangeEvent) -> str:
@@ -39,15 +39,17 @@ def apply_change(text: str, change: TextDocumentContentChangeEvent) -> str:
 def document_changed(message: DidChangeTextDocumentNotification, state: State):
     text_document = state.text_documents[message.params.textDocument.uri]
     for change in message.params.contentChanges:
-        text_document.text = apply_change(text_document.text, change)
-    text_document.version = message.params.textDocument.version
-    diagnostics = generate_diagnostics(text_document=text_document, rules=state.rules)
-    state.diagnostics_by_uri[text_document.uri] = diagnostics
+        text_document.document.text = apply_change(text_document.document.text, change)
+    text_document.document.version = message.params.textDocument.version
+    diagnostics = generate_diagnostics(
+        text_document=text_document.document, rules=text_document.lint_rules
+    )
+    text_document.diagnostics = diagnostics
     return PublishDiagnosticsNotification(
         method="textDocument/publishDiagnostics",
         params=PublishDiagnosticsParams(
-            uri=text_document.uri,
-            version=text_document.version,
+            uri=text_document.document.uri,
+            version=text_document.document.version,
             diagnostics=list(diagnostics),
         ),
     )

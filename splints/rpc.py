@@ -2,8 +2,8 @@ import sys
 from dataclasses import dataclass
 from splints.logger import logger
 
-from splints.types.base import Message
-from splints.types.unions import Notification, Request, RootInput
+from splints.types.lsp.base import Message
+from splints.types.lsp.unions import Notification, Request, RootInput
 
 
 def read_field() -> bytes:

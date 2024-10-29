@@ -2,8 +2,8 @@ from enum import IntEnum, StrEnum
 from typing import Any, Literal
 from pydantic import BaseModel
 
-from splints.types.base import RequestBase, ResponseBase
-from splints.types.shared import DocumentUri
+from splints.types.lsp.base import RequestBase, ResponseBase
+from splints.types.lsp.shared import DocumentUri
 
 
 class DiagnosticOptions(BaseModel):
