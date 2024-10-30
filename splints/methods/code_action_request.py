@@ -14,12 +14,30 @@ from splints.types.server import State
 @method(CodeActionRequest, CodeActionResponse)
 def code_action_request(message: CodeActionRequest, state: State):
     code_actions: list[CodeAction] = []
+    document_lines = state.text_documents[
+        message.params.textDocument.uri
+    ].document.text.splitlines()
     for diagnostic in message.params.context.diagnostics:
         if diagnostic.data is None:
             continue
         rule = state.lint_rules[diagnostic.data.rule_id]
-        text = diagnostic.data.text
+
+        diagnostic_lines = document_lines[
+            diagnostic.range.start.line : diagnostic.range.end.line + 1
+        ]
+        text = "\n".join(diagnostic_lines)
+
         for option in rule.replacement_options:
+            text_to_replace = re.search(option.pattern, text)
+            if text_to_replace is None:
+                continue
+            replacement_start_index = text_to_replace.start()
+            replacement_end_index = len(text_to_replace.group(0).splitlines()[-1])
+
+            replaced_text = re.sub(
+                option.pattern, option.replacement, text, re.MULTILINE
+            )
+
             imports = [
                 TextEdit(
                     range=Range(
@@ -30,7 +48,6 @@ def code_action_request(message: CodeActionRequest, state: State):
                 )
                 for line in option.imports
             ]
-            replaced_text = re.sub(option.pattern, option.replacement, text)
             code_actions.append(
                 CodeAction(
                     title=option.description,
@@ -39,7 +56,19 @@ def code_action_request(message: CodeActionRequest, state: State):
                     edit=WorkspaceEdit(
                         changes={
                             message.params.textDocument.uri: [
-                                TextEdit(range=diagnostic.range, newText=replaced_text),
+                                TextEdit(
+                                    range=Range(
+                                        start=Position(
+                                            line=diagnostic.range.start.line,
+                                            character=replacement_start_index,
+                                        ),
+                                        end=Position(
+                                            line=diagnostic.range.end.line,
+                                            character=replacement_end_index,
+                                        ),
+                                    ),
+                                    newText=replaced_text,
+                                ),
                                 *imports,
                             ]
                         }
