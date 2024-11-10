@@ -1,14 +1,24 @@
 import importlib
 from splints.logger import logger
 from splints.types.linting import LintRule, LintRuleId
-import os
+import pkgutil
+import splints.plugins as plugins
 
 
-def parse() -> dict[LintRuleId, LintRule]:
-    splints_plugin = os.getenv("SPLINTS_PLUGIN", "default")
-    logger.info(f"Using splints plugin {splints_plugin}")
-    rules = importlib.import_module(f"splints_plugin.{splints_plugin}").parse()
-    assert isinstance(rules, list)
-    for rule in rules:
-        assert isinstance(rule, LintRule)
+def load_plugins() -> dict[LintRuleId, LintRule]:
+    rules: list[LintRule] = []
+    for _, name, _ in pkgutil.iter_modules(plugins.__path__, plugins.__name__ + "."):
+        logger.info(f"Loading plugin {name}")
+        try:
+            plugin_rules = importlib.import_module(name).load_rules()
+            assert isinstance(
+                plugin_rules, list
+            ), f"{name} failed to generate a valid rules list"
+            for rule in plugin_rules:
+                assert isinstance(
+                    rule, LintRule
+                ), f"{name} failed to generate a valid rules list"
+                rules.append(rule)
+        except BaseException as e:
+            logger.error(e)
     return {id: rule for id, rule in enumerate(rules)}
