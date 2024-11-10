@@ -11,8 +11,7 @@ splints = "splints.entrypoint:run"
 
 [tool.setuptools.package-dir]
 splints = "splints"
-splints_plugin = "splints_plugin"
 
 
 [tool.setuptools]
-packages = ["splints", "splints_plugin"]
+packages = ["splints"]
