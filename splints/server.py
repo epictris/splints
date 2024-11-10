@@ -10,7 +10,7 @@ from splints.types.lsp.base import (
 )
 
 
-from splints.types.linting import LintRule
+from splints.types.linting import LintRule, LintRuleId
 from splints.types.methods.exit import ExitNotification
 from splints.types.server import State
 from splints.types.lsp.unions import Notification, Request, Response
@@ -22,7 +22,7 @@ ResponseDataT = TypeVar("ResponseDataT", bound=ResponseBase)
 
 
 class Server:
-    def __init__(self, rules: list[LintRule]):
+    def __init__(self, rules: dict[LintRuleId, LintRule]):
         self.method_handlers: dict[str, Callable] = {}
         self._state = State(text_documents={}, lint_rules=rules)
 
