@@ -1,14 +1,13 @@
 import os
 import yaml
 
-from splints.environment import get_rules_file
 from splints.types.linting import LintRule, Rules
 
 LOCATIONS_TO_CHECK = ["splints.yaml"]
 
 
 def _locate_rules_file() -> str | None:
-    rules_file = get_rules_file()
+    rules_file = os.getenv("SPLINTS_RULES")
     if rules_file is not None:
         return rules_file
     for location in LOCATIONS_TO_CHECK:
