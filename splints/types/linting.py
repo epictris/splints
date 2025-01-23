@@ -1,7 +1,7 @@
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 from pydantic import BaseModel
-from pydantic.root_model import RootModel
 
 
 class Severity(StrEnum):
@@ -9,12 +9,6 @@ class Severity(StrEnum):
     WARNING = "warning"
     INFO = "info"
     HINT = "hint"
-
-
-class RegexEngine(StrEnum):
-    PYTHON = "python"
-    PCRE2 = "pcre2"
-    RE2 = "re2"
 
 
 class TextFormat(StrEnum):
@@ -26,25 +20,18 @@ class CodeActionType(StrEnum):
     REPLACE = "replace"
     IMPORT = "import"
 
+class PatternScope(StrEnum):
+    CHARACTERS = "characters"
+    LINES = "lines"
 
-class PatternReplacement(BaseModel):
-    description: str
-    pattern: str
+
+@dataclass(kw_only=True)
+class PatternReplacement:
+    description: str | None = None
+    pattern: str = "(\n|.)*"
     replacement: str
-    imports: list[str] = []
-
-
-class LintRule(BaseModel):
-    pattern: str
-    message: str
-    code: str | None = None
-    include_globs: list[str] = ["*"]
-    exclude_globs: list[str] = []
-    severity: Severity = Severity.WARNING
-    format: TextFormat | None = None
-    multiline: bool = False
-    engine: RegexEngine = RegexEngine.PYTHON
-    replacement_options: list[PatternReplacement] = []
+    imports: list[str] | None = None
+    scope: PatternScope = PatternScope.CHARACTERS
 
 
 class ActiveLintRule(BaseModel):
@@ -54,11 +41,19 @@ class ActiveLintRule(BaseModel):
     format: TextFormat | None
     severity: Severity
     multiline: bool
-    engine: RegexEngine
 
 
 LintRuleId = int
 
 
-class Rules(RootModel):
-    root: list[LintRule]
+@dataclass(kw_only=True)
+class LintRule:
+    pattern: str
+    message: str
+    code: str | None = None
+    include_globs: list[str] = field(default_factory=lambda: ["*"])
+    exclude_globs: list[str] = field(default_factory=list)
+    severity: Severity = Severity.WARNING
+    format: TextFormat | None = None
+    multiline: bool = False
+    replacement_options: list[PatternReplacement] | None = None

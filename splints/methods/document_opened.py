@@ -22,7 +22,6 @@ def document_opened(args: DidOpenTextDocumentNotification, state: State):
             format=rule.format,
             severity=rule.severity,
             multiline=rule.multiline,
-            engine=rule.engine,
         )
         for rule_id, rule in state.lint_rules.items()
         if any(fnmatch.fnmatch(file_path, path) for path in rule.include_globs)
