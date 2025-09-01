@@ -1,7 +1,7 @@
 import os
 import yaml
 
-from splints.types.linting import LintRule, PatternReplacement
+from splints.types.linting import LintRule
 
 LOCATIONS_TO_CHECK = ["splints.yaml"]
 
@@ -25,13 +25,5 @@ def load_rules() -> list[LintRule]:
     parsed_rules: list[LintRule] = []
     for rule in rules:
         assert isinstance(rule, dict)
-        replacement_options = rule.get("replacement_options")
-        parsed_replacement_options: list[PatternReplacement] = []
-        if replacement_options is not None:
-            assert isinstance(replacement_options, list)
-            for replacement in replacement_options:
-                parsed_replacement = PatternReplacement(**replacement)
-                parsed_replacement_options.append(parsed_replacement)
-        rule["replacement_options"] = parsed_replacement_options
         parsed_rules.append(LintRule(**rule))
     return parsed_rules

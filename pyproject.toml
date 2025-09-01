@@ -4,10 +4,10 @@ requires = ["setuptools"]
 [project]
 name = "splints"
 version = "0.0.2"
-dependencies = ["pydantic == 2.9.2", "pyyaml"]
+dependencies = ["pyyaml", "pygls == 1.3.1"]
 
 [project.scripts]
-splints = "splints.entrypoint:run"
+splints = "splints.server:run"
 
 [tool.setuptools.package-dir]
 splints = "splints"
