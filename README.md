@@ -7,4 +7,4 @@ pip install splints
 ```
 
 # Details
-[PiPI Package](https://pypi.org/project/splints)
+[PyPI Package](https://pypi.org/project/splints)
