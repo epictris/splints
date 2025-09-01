@@ -19,11 +19,11 @@ Add lint rules to a file named `splints.yaml` at the root of your repo. This can
   message: 'Type ignores are only allowed in exceptional circumstances'
 ```
 
-#### Disallow use of Any in python files
+#### Disallow use of Any in Python files
 ```yaml
 - pattern: ': Any'
-- message: 'Any should rarely be used as a type decorator. Use a more descriptive type'
-- include_globs: ['*.py']
+  message: 'Any should rarely be used as a type decorator. Use a more descriptive type'
+  include_globs: ['*.py']
 ```
 
 #### Disallow external use of private properties/methods
@@ -50,4 +50,14 @@ Add lint rules to a file named `splints.yaml` at the root of your repo. This can
   - description: Convert to spread notation
     pattern: "(\\w+|\\[.*])\\.concat\\([\\s\\r\\n]*(\\w+|\\[.*])[\\s\\r\\n]*\\)"
     replacement: "[...\\1, ...\\2]"
+```
+
+#### Ensure zip() uses strict=True
+```yaml
+- pattern: 'zip\((?!.*strict\s*=\s*True)[^)]*\)'
+  message: 'zip must be used with strict=True'
+  replacement_options:
+  - description: Use strict=True
+    pattern: 'zip\((.*)\)'
+    replacement: 'zip(\1, strict=True)'
 ```
