@@ -27,7 +27,7 @@ Add lint rules to a file named `splints.yaml` at the root of your repo. This can
 ```
 
 #### Disallow external use of private properties/methods
-```
+```yaml
 - pattern: '(?<!self)\._\w+'
   message: 'Do not reference private properties/methods directly. Use public getters and setters instead'
   include_globs: ['*.py']
