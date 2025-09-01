@@ -9,8 +9,26 @@ pip install splints
 [PyPI Package](https://pypi.org/project/splints)
 
 # Defining Rules
-Add lint rules to a file named `splints.yaml` at the root of your repo. This can be overridden by setting the environment variable `SPLINTS_FILE`
+Add lint rules to a file named `splints.yaml` at the root of your repo. The location can be overridden by setting the environment variable `SPLINTS_FILE`
 
+
+### Required properties
+- pattern (string): The regex expression used to find text matching this lint rule
+- message (string): A description of the lint rule
+
+### Optional properties
+- code (string): An optional identifier for the lint rule
+- include_globs (list of strings): The lint rule will be active in files matching these globs. Defaults to ["*"]
+- exclude_globs: (list of strings): The lint rule will be deactivated in files matching these globs - overrides `include_globs`. Defaults to []
+- severity ("error", "warning", "info", "hint"): Changes how your LSP client formats the popup window
+- tags ("deprecated", "unnecessary"): Changes how your LSP client formats the popup message text
+- replacement_options (list of PatternReplacement objects - see below): The replacement options provided when your IDE requests a code action.
+
+#### PatternReplacement properties
+- description (string): Describe what the replacement will do. If no description is provided the description will be set to the replacement outcome.
+- pattern (string): Matches text to replace from the characters matched by its parent lint rule pattern. Defaults to "(\n|.)*" (replaces all characters)
+- replacement (string): A string or regex expression that describes the text replacement.
+- imports (list of strings): A list of lines to add to the top of the file to import dependencies of the replacement.
 
 ### Example Rule Definitions
 #### Warn against type ignores
@@ -60,4 +78,19 @@ Add lint rules to a file named `splints.yaml` at the root of your repo. This can
   - description: Use strict=True
     pattern: 'zip\((.*)\)'
     replacement: 'zip(\1, strict=True)'
+```
+
+#### Prefer StrEnum/IntEnum over Enum
+```yaml
+- pattern: 'class (\w+)\(Enum'
+  message: 'Prefer StrEnum or IntEnum over Enum'
+  replacement_options:
+  - description: 'Use StrEnum'
+    pattern: 'class (\w+)\(Enum'
+    replacement: 'class \1(StrEnum'
+    imports: [ from enum import StrEnum ]
+  - description: 'Use IntEnum'
+    pattern: 'class (\w+)\(Enum'
+    replacement: 'class \1(IntEnum'
+    imports: [ from enum import IntEnum ]
 ```
