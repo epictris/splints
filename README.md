@@ -18,15 +18,15 @@ Add lint rules to a file named `splints.yaml` at the root of your repo. The loca
 
 ### Optional properties
 - code (string): An optional identifier for the lint rule
-- include_globs (list of strings): The lint rule will be active in files matching these globs. Defaults to ["*"]
-- exclude_globs: (list of strings): The lint rule will be deactivated in files matching these globs - overrides `include_globs`. Defaults to []
+- include_globs (list of strings): The lint rule will be active in files matching these globs. Defaults to `["*"]`
+- exclude_globs: (list of strings): The lint rule will be deactivated in files matching these globs - overrides `include_globs`. Defaults to `[]`
 - severity ("error", "warning", "info", "hint"): Changes how your LSP client formats the popup window
 - tags ("deprecated", "unnecessary"): Changes how your LSP client formats the popup message text
 - replacement_options (list of PatternReplacement objects - see below): The replacement options provided when your IDE requests a code action.
 
 #### PatternReplacement properties
 - description (string): Describe what the replacement will do. If no description is provided the description will be set to the replacement outcome.
-- pattern (string): Matches text to replace from the characters matched by its parent lint rule pattern. Defaults to "(\n|.)*" (replaces all characters)
+- pattern (string): Matches text to replace from the characters matched by its parent lint rule pattern. Defaults to `"(\n|.)*"` (replaces all characters)
 - replacement (string): A string or regex expression that describes the text replacement.
 - imports (list of strings): A list of lines to add to the top of the file to import dependencies of the replacement.
 
@@ -46,7 +46,7 @@ Add lint rules to a file named `splints.yaml` at the root of your repo. The loca
 
 #### Disallow external use of private properties/methods
 ```yaml
-- pattern: '(?<!self)\._\w+'
+- pattern: '(?<!self)\._[^_]\w+'
   message: 'Do not reference private properties/methods directly'
   include_globs: ['*.py']
   severity: error
@@ -80,7 +80,7 @@ Add lint rules to a file named `splints.yaml` at the root of your repo. The loca
     replacement: 'zip(\1, strict=True)'
 ```
 
-#### Prefer StrEnum/IntEnum over Enum
+#### Replace Enum with StrEnum/IntEnum
 ```yaml
 - pattern: 'class (\w+)\(Enum'
   message: 'Prefer StrEnum or IntEnum over Enum'
