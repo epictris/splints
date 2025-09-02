@@ -9,7 +9,7 @@ pip install splints
 [PyPI Package](https://pypi.org/project/splints)
 
 # Defining Rules
-Add lint rules to a file named `splints.yaml` at the root of your repo. The location can be overridden by setting the environment variable `SPLINTS_FILE`
+Add lint rules to a file named `splints.yaml` at the root of your repo. The location can be overridden by setting the environment variable `SPLINTS_RULES`
 
 
 ### Required properties
