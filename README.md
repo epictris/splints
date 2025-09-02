@@ -6,6 +6,16 @@ Language-Agnostic LSP implementation providing IDE linting with customisable for
 pip install splints
 ```
 
+### Neovim
+Add the following to your config
+```lua
+vim.lsp.config["splints"] = {
+    cmd = { "splints" },
+    filetypes = { "python" },
+}
+vim.lsp.enable("splints")
+```
+
 [PyPI Package](https://pypi.org/project/splints)
 
 # Defining Rules
